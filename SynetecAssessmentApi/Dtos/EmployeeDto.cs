@@ -1,4 +1,6 @@
-﻿namespace SynetecAssessmentApi.Dtos
+﻿using SynetecAssessmentApi.Domain;
+
+namespace SynetecAssessmentApi.Dtos
 {
     public class EmployeeDto
     {
@@ -6,5 +8,14 @@
         public string JobTitle { get; set; }
         public int Salary { get; set; }
         public DepartmentDto Department { get; set; }
+
+
+        public EmployeeDto(Employee employee)
+        {
+            Fullname = employee.Fullname;
+            JobTitle = employee.JobTitle;
+            Salary = employee.Salary;
+            Department = new DepartmentDto(employee.Department);
+        }
     }
 }

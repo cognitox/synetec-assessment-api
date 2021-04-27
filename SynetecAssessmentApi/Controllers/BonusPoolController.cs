@@ -1,29 +1,39 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SynetecAssessmentApi.Dtos;
-using SynetecAssessmentApi.Services;
+using SynetecAssessmentApi.Interfaces;
 using System.Threading.Tasks;
+using SynetecAssessmentApi.Constants;
 
 namespace SynetecAssessmentApi.Controllers
 {
     [Route("api/[controller]")]
     public class BonusPoolController : Controller
     {
+        private IBonusPoolService _service;
+        public BonusPoolController(IBonusPoolService service)
+        {
+            _service = service;
+        }
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var bonusPoolService = new BonusPoolService();
-
-            return Ok(await bonusPoolService.GetEmployeesAsync());
+            return Ok(await _service.GetEmployeesAsync());
         }
 
         [HttpPost()]
         public async Task<IActionResult> CalculateBonus([FromBody] CalculateBonusDto request)
         {
-            var bonusPoolService = new BonusPoolService();
+            if (request.SelectedEmployeeId == default)
+                return BadRequest(ExceptionMessages.EmployeeIdNotValid(request.SelectedEmployeeId));
 
-            return Ok(await bonusPoolService.CalculateAsync(
-                request.TotalBonusPoolAmount,
-                request.SelectedEmployeeId));
+            var result = await _service.CalculateAsync(
+                            request.TotalBonusPoolAmount,
+                            request.SelectedEmployeeId);
+
+            if (result == null)
+                return BadRequest(ExceptionMessages.EmployeeDoesntExist(request.SelectedEmployeeId));
+
+            return Ok(result);
         }
     }
 }
