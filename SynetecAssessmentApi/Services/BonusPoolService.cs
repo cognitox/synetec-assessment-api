@@ -32,6 +32,7 @@ namespace SynetecAssessmentApi.Services
 
         public async Task<BonusPoolCalculatorResultDto> CalculateAsync(int bonusPoolAmount, int selectedEmployeeId)
         {
+            int bonusAllocation = 0;
             //load the details of the selected employee using the Id
             Employee employee = await _employeeRepository.GetEmployeeByIdAsync(selectedEmployeeId);
 
@@ -41,9 +42,12 @@ namespace SynetecAssessmentApi.Services
             //get the total salary budget for the company
             int totalSalary = await _employeeRepository.GetSalaryBudgetForCompanyAsync();
 
-            //calculate the bonus allocation for the employee
-            decimal bonusPercentage = (decimal)employee.Salary / (decimal)totalSalary;
-            int bonusAllocation = (int)(bonusPercentage * bonusPoolAmount);
+            if (totalSalary != 0)
+            {
+                //calculate the bonus allocation for the employee
+                decimal bonusPercentage = (decimal)employee.Salary / (decimal)totalSalary;
+                bonusAllocation = (int)(bonusPercentage * bonusPoolAmount);
+            }                        
 
             return new BonusPoolCalculatorResultDto
             {

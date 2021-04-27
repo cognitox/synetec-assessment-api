@@ -9,8 +9,8 @@ namespace SynetecAssessmentApi.Dtos
 
         public DepartmentDto(Department department)
         {
-            Title = department.Title;
-            Description = department.Description;
+            Title = department?.Title;
+            Description = department?.Description;
         }
     }
 }
